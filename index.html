@@ -1,0 +1,107 @@
+<<!DOCTYPE html>
+<html>
+ 
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="renderer" content="webkit">
+    <link rel="stylesheet" href="//cdnjs.loli.net/ajax/libs/mdui/0.4.3/css/mdui.min.css" />
+    <link rel="icon" href="https://ivampiresp.com/wp-content/uploads/2020/02/cropped-illust_78879291_20200207_181713-32x32.jpg" sizes="32x32" />
+    <link rel="icon" href="https://ivampiresp.com/wp-content/uploads/2020/02/cropped-illust_78879291_20200207_181713-192x192.jpg" sizes="192x192" />
+    <link rel="apple-touch-icon" href="https://ivampiresp.com/wp-content/uploads/2020/02/cropped-illust_78879291_20200207_181713-180x180.jpg" />
+    <script src="//cdnjs.loli.net/ajax/libs/mdui/0.4.3/js/mdui.min.js"></script>
+    <title>Test</title>
+</head>
+ 
+<body class="mdui-drawer-body-left mdui-appbar-with-toolbar  mdui-theme-primary-indigo mdui-theme-accent-pink">
+    <header class="mdui-appbar mdui-appbar-fixed">
+        <div class="mdui-toolbar mdui-color-theme">
+            <span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer', swipe: true}"><i class="mdui-icon material-icons">menu</i></span>
+            <a href="#" class="mdui-typo-headline mdui-typo-title">Test</a>
+ 
+            <div class="mdui-toolbar-spacer"></div>
+        </div>
+    </header>
+    <div class="mdui-drawer" id="main-drawer">
+        <div class="mdui-list" mdui-collapse="{accordion: true}" style="margin-bottom: 76px;">
+            <div class="mdui-collapse-item ">
+                <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+                    <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-blue">near_me</i>
+                    <div class="mdui-list-item-content">菜单</div>
+                    <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+                </div>
+                <div class="mdui-collapse-item-body mdui-list">
+                    <a href="./" class="mdui-list-item mdui-ripple ">刷新</a>
+                    <a href="https://ivampiresp.com" class="mdui-list-item mdui-ripple ">它的博客</a>
+					<a href="http://114514.cn" class="mdui-list-item mdui-ripple ">我的博客(bushi</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mdui-container" style="float: left;">
+        <br />
+        <video muted="muted" preload="auto" class="mdui-video-fluid" poster="http://121.21.249.134:3001/loading.jpg" id="video" controls></video>
+        <script src="http://121.21.249.134:3001/hls.js"></script>
+        <script>
+            var video = document.getElementById('video');
+            if (Hls.isSupported()) {
+                var hls = new Hls();
+                hls.loadSource('http://121.21.249.134:3001/hls/index.m3u8');
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = 'http://121.21.249.134:3001/hls/index.m3u8';
+                video.addEventListener('loadedmetadata', function() {
+                    video.play();
+                });
+            }
+        </script>
+        <h1 class="mdui-text-color-theme">实时评论区</h1>
+        <ul id="messages"></ul>
+ 
+        <form name="chat" action="">
+            <div class="mdui-textfield">
+                <label class="mdui-textfield-label">昵称</label>
+                <input class="mdui-textfield-input" id="username" type="text" placeholder="昵称" oninput="getUser()" autocomplete="on" required />
+ 
+            </div>
+            <div class="mdui-textfield">
+                <label class="mdui-textfield-label">实时评论</label>
+                <input class="mdui-textfield-input" id="comment" type="text" onclick="echoUser()" placeholder="请遵守格式，谢谢! 格式为：“昵称：内容”（不包括引号）" autocomplete="off" maxlength="35" required />
+                <br />
+                <button class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">发送</button>
+            </div>
+        </form>
+ 
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            function getUser() {
+                userName = ($("#username").val());
+            }
+ 
+            function echoUser() {
+                $("#comment").attr("value", userName + '：');
+            }
+            var socket = io();
+            $('form').submit(function() {
+                //点击发送按钮，提交输入的信息
+                socket.emit('chat message', $('#comment').val());
+                $('#comment').val(userName + '：');
+                return false;
+            });
+            //接收到chat message时
+            socket.on('chat message', function(msg) {
+                //将chat message显示在页面
+                $('#messages').append($('<li>').text(msg));
+            });
+        </script>
+ 
+        <p>本直播页面是使用Nginx RTMP模块实现的，并且使用了hls.js和socket.io做到的接收流和实时评论，缺点是不能查看以前的评论。后端：nodejs。搭建教程：<a href="https://ivampiresp.com/2020/04/05/%e4%bd%bf%e7%94%a8nginx%e7%9a%84rtmp%e6%a8%a1%e5%9d%97%e6%90%ad%e5%bb%ba%e4%b8%80%e4%b8%aa%e6%b5%81%e5%bc%8f%e5%aa%92%e4%bd%93%ef%bc%88%e7%9b%b4%e6%92%ad%ef%bc%89%e6%9c%8d%e5%8a%a1%e5%99%a8%e5%b9%b6.html">点我查看</a></p>
+    </div>
+</body>
+ 
+</html>
