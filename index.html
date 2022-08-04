@@ -41,19 +41,19 @@
     </div>
     <div class="mdui-container" style="float: left;">
         <br />
-        <video muted="muted" preload="auto" class="mdui-video-fluid" poster="http://121.21.249.134:3001/loading.jpg" id="video" controls></video>
-        <script src="http://121.21.249.134:3001/hls.js"></script>
+        <video muted="muted" preload="auto" class="mdui-video-fluid" poster="loading.jpg" id="video" controls></video>
+        <script src="hls.js"></script>
         <script>
             var video = document.getElementById('video');
             if (Hls.isSupported()) {
                 var hls = new Hls();
-                hls.loadSource('http://121.21.249.134:3001/hls/index.m3u8');
+                hls.loadSource('http://url/hls/index.m3u8');
                 hls.attachMedia(video);
                 hls.on(Hls.Events.MANIFEST_PARSED, function() {
                     video.play();
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = 'http://121.21.249.134:3001/hls/index.m3u8';
+                video.src = 'http://url/hls/index.m3u8';
                 video.addEventListener('loadedmetadata', function() {
                     video.play();
                 });
