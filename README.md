@@ -1,1 +1,1 @@
-Get homeserver IP and a rtmp player
+Get my homeserver IP and a rtmp player
